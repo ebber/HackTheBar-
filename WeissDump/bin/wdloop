@@ -1,0 +1,28 @@
+#!/bin/bash
+
+value=0
+
+while read line
+do
+param=$(echo $line | cut -f1 -d= | tr -d ' ')
+if [ "$param" = "PICWD" ]; then
+        value=$(echo $line | cut -f2 -d= | tr -d ' ')
+fi
+done < "/etc/config/wdvars"
+
+wd_toggle=$((0))
+echo 4 > /sys/class/gpio/export
+echo "out" > /sys/class/gpio/gpio4/direction
+while :
+do
+        if [[ "$value" -gt 0 ]]; then
+                echo $wd_toggle > /sys/class/gpio/gpio4/value
+                if [[ "$wd_toggle" -gt 0 ]]; then
+			wd_toggle=$((0))
+		else
+			wd_toggle=$((1))
+		fi
+        fi
+	sleep 5
+done
+
