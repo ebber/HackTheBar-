@@ -26,6 +26,7 @@ s.close()
 
 server_name = "172.17.46.16"
 server_port_base = 1338
+server_port_inc=0;
 server_port = server_port_base + server_port_inc
 server_address = (server_name, server_port)
 
@@ -44,7 +45,7 @@ def unlock_beer(data):
     if  not users.has_key(data):
         users[data]=0;
 
-    users[data]=users[data]+pricePL;
+    users[data]=users[data]*pricePL;
     print "Machine unlocked"
     beerLocked=0;
     flow=0;
@@ -81,6 +82,7 @@ def setUpServer():
                 #if  not users.has_key(str(data)):
                 #    users[data]=0;
                 unlock_beer(data);
+                print str(users[data])
                 connection.send(str(users[data]))
                 if beerLocked:
                     connection.send(beerUnlockedCode)
@@ -134,7 +136,7 @@ while True:
     try:
         server_port=server_port_base + server_port_inc
         setUpServer();
-    #except:
+    except:
         print "we are erroring out"
         print server_port
         server_port_inc = (server_port_inc+1)%3
